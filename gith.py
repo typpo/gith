@@ -10,10 +10,10 @@ from os.path import getmtime
 from ConfigParser import ConfigParser
 from ncrypt.cipher import EncryptCipher, DecryptCipher, CipherType
 
-# TODO support for dirs here
+# TODO support for dirs
 DO_NOT_ENCRYPT = ['.gitignore']
 
-# TODO gitignore support
+# TODO parse gitignore
 IGNORE_FILES = ['.gith']
 IGNORE_DIRS = ['.git']
 
@@ -26,27 +26,33 @@ def encrypt_file(cipherType, key, iv, src, dest):
     in_file = open(src, 'r')
     out_file = open(dest, 'w')
 
-    enc = EncryptCipher( cipherType, key, iv )
+    enc = EncryptCipher(cipherType, key, iv)
     while 1 :
-        data = in_file.read( 8192 )
+        data = in_file.read(8192)
         if not data : break
-        out_data = enc.update( data )
-        out_file.write( out_data )
+        out_data = enc.update(data)
+        out_file.write(out_data)
     final_data = enc.finish()
-    out_file.write( final_data )
+    out_file.write(final_data)
 
     in_file.close()
     out_file.close()
 
-def decrypt_file( cipherType, key, iv, in_file, out_file ) :
-    dec = DecryptCipher( cipherType, key, iv )
+def decrypt_file(cipherType, key, iv, src, dest):
+    in_file = open(src, 'r')
+    out_file = open(dest, 'w')
+
+    dec = DecryptCipher(cipherType, key, iv)
     while 1 :
-        data = in_file.read( 8192 )
+        data = in_file.read(8192)
         if not data : break
-        out_data = dec.update( data )
-        out_file.write( out_data )
+        out_data = dec.update(data)
+        out_file.write(out_data)
     final_data = dec.finish()
-    out_file.write( final_data )
+    out_file.write(final_data)
+
+    in_file.close()
+    out_file.close()
 
 def read_config():
     config = ConfigParser()
@@ -72,10 +78,10 @@ def sync(cfg):
         os.mkdir(enc_dir)
 
     for dirname, dirnames, filenames in os.walk(work_dir):
+        # TODO subdir support
         """
         for subdir in dirnames:
             if not os.path.isdir(subdir):
-                # TODO fix this -- add support for subdirectories
                 os.mkdir(enc_dir + subdir)
         """
 
@@ -104,7 +110,7 @@ def duplicate(cfg, argv=sys.argv[1:]):
 
     if argv[0] == 'commit':
         # copy edit message
-        # TODO make it so that this doesn't have to be entered twice
+        # TODO shouldn't need to enter twice
         editpath = os.path.join(GIT_DIR, 'COMMIT_EDITMSG')
         shutil.copyfile(os.path.join(cfg['working_dir'], editpath), \
             os.path.join(cfg['encrypted_dir'], editpath))
