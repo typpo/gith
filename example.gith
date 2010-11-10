@@ -1,0 +1,6 @@
+[gith]
+# 16 hex chars for key, iv
+key=
+iv=
+working_dir=.
+encrypted_dir=.githdata/
