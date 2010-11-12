@@ -115,8 +115,9 @@ def duplicate(cfg, argv=sys.argv[1:]):
         shutil.copyfile(os.path.join(cfg['working_dir'], editpath), \
             os.path.join(cfg['encrypted_dir'], editpath))
 
-    os.chdir(cfg['encrypted_dir'])
-    os.system(cmd)
+    if argv[0] != 'diff' and argv[0] != 'remote':
+        os.chdir(cfg['encrypted_dir'])
+        os.system(cmd)
 
 def main(argv=sys.argv):
     cfg = read_config()
